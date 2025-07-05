@@ -1,51 +1,70 @@
-//
 import express from 'express';
-
 import nodemailer from 'nodemailer';
+
 const app = express();
-app.use(express.json());  
-app.use(express.urlencoded({ extended: true })); // For parsing application/x-www-form-urlencoded
+const PORT = process.env.PORT || 3000;
 
+// Middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-
-// Replace these with your actual Gmail and App Password
+// Environment variables (✅ for security)
 const senderEmail = 'whyonlyhead@gmail.com';
-const appPassword = 'atob hjie fujb shdd'; // 🔐 Use your 16-char app password here
+const appPassword = 'atob hjie fujb shdd'; // ⚠️ Use ENV in production
 
-app.post('/send-email', (req, res) => {
-  const { name,email,message } = req.body;
+// POST /send-email
+app.post('/send-email', async (req, res) => {
+  const { name, email, message } = req.body;
 
+  // ✅ Basic validation
+  if (!name || !email || !message) {
+    return res.status(400).json({
+      success: false,
+      message: 'Name, email, and message are required.',
+    });
+  }
 
-  const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: senderEmail,
-    pass: appPassword,
-  },
-});
+  try {
+    // Create transporter
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: senderEmail,
+        pass: appPassword,
+      },
+    });
 
-const mailOptions = { 
-  from: senderEmail,
-  to: 'thecloudbox0@gmail.com', // ✅ change this to who you want to email
-  subject: name + ' has sent you a message',
-  text: message+"\n\nFrom: " + name + "\nEmail: " + email,
-};
+    const mailOptions = {
+      from: senderEmail,
+      to: 'thecloudbox0@gmail.com', // Your destination email
+      subject: `${name} has sent you a message`,
+      text: `${message}\n\nFrom: ${name}\nEmail: ${email}`,
+    };
 
-transporter.sendMail(mailOptions, (error, info) => {
-  if (error) {
-    console.error('❌ Error sending email:', error);
-  } else {
+    // Send email
+    const info = await transporter.sendMail(mailOptions);
     console.log('✅ Email sent:', info.response);
+
+    res.status(200).json({
+      success: true,
+      message: 'Email sent successfully!',
+    });
+  } catch (error) {
+    console.error('❌ Email error:', error.message);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to send email. Try again later.',
+      error: error.message,
+    });
   }
 });
-res.status(200).json({sucess:true,
-message: 'Email sent successfully!' });
 
-})
+// Health check
 app.get('/', (req, res) => {
-  res.send('Welcome to the Email Sending Service!');
+  res.send('📨 Welcome to the Email Sending Service!');
 });
 
-app.listen(3000, () => {
-  console.log('Server is running on http://localhost:3000');
-} );
+// Start server
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
+});
