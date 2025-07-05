@@ -1,13 +1,13 @@
 import express from 'express';
 import nodemailer from 'nodemailer';
-
+import cors from 'cors';
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
+app.use(cors())
 // Environment variables (✅ for security)
 const senderEmail = 'whyonlyhead@gmail.com';
 const appPassword = 'atob hjie fujb shdd'; // ⚠️ Use ENV in production
