@@ -26,7 +26,7 @@ app.post('/send-email', (req, res) => {
 
 const mailOptions = { 
   from: senderEmail,
-  to: 'sabihop56@gmail.com', // ✅ change this to who you want to email
+  to: 'thecloudbox0@gmail.com', // ✅ change this to who you want to email
   subject: name + ' has sent you a message',
   text: message+"\n\nFrom: " + name + "\nEmail: " + email,
 };
