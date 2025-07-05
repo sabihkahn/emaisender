@@ -42,7 +42,9 @@ res.status(200).json({sucess:true,
 message: 'Email sent successfully!' });
 
 })
-
+app.get('/', (req, res) => {
+  res.send('Welcome to the Email Sending Service!');
+});
 
 app.listen(3000, () => {
   console.log('Server is running on http://localhost:3000');
