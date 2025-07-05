@@ -1,0 +1,1 @@
+hi in this peogram you can take input from user in email messgae name and can send it on a specific gmail but remember for sending a password is used
